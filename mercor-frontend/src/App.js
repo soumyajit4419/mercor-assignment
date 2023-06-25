@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useSpeechRecognition, useSpeechSynthesis } from "react-speech-kit";
+import { useSpeechRecognition } from "react-speech-kit";
 import axios from "axios";
 import "./App.css";
 
@@ -9,6 +9,7 @@ function App() {
   const [allMessage, setAllMessage] = useState([]);
   const [prog, setProg] = useState(false);
   const chatContainerRef = useRef(null);
+  const synth = window.speechSynthesis;
 
   const { listen, listening, stop } = useSpeechRecognition({
     onResult: (result) => {
@@ -16,11 +17,20 @@ function App() {
     },
   });
 
-  const { speak, voices } = useSpeechSynthesis({
-    onEnd: () => {
+  const speak = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    synth.speak(utterance);
+    utterance.onend = () => {
       listen();
-    },
-  });
+    };
+  };
+
+  const stopSpeaking = () => {
+    if (synth && synth.speaking) {
+      synth.cancel();
+      listen();
+    }
+  };
 
   useEffect(() => {
     if (value === "") {
@@ -57,7 +67,7 @@ function App() {
 
       if (response.data.status === 200) {
         const resMsg = response.data.value.choices[0].message;
-        speak({ text: resMsg.content, voice: voices[144] });
+        speak(resMsg.content);
 
         const tempArr = [...updatedArr, resMsg];
         console.log(tempArr, "my sms2");
@@ -127,6 +137,12 @@ function App() {
         </div>
         {listening && (
           <div style={{ marginTop: "8px" }}>Go ahead I'm listening</div>
+        )}
+
+        {synth.speaking && (
+          <div style={{ marginTop: "8px" }}>
+            <button onClick={stopSpeaking}> 🛑 Stop Speaking</button>
+          </div>
         )}
       </div>
     </div>
