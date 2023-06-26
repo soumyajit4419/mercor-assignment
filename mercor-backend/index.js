@@ -4,9 +4,10 @@ const cors = require("cors");
 var bodyParser = require("body-parser");
 require("dotenv").config();
 
-const { Configuration, OpenAIApi } = require("openai");
-
+const { Configuration, OpenAIApi } = require("openai"); //
+//https://platform.openai.com/account/api-keys from here we get API_KEY
 const API_KEY = process.env.API_KEY;
+
 const configuration = new Configuration({
   apiKey: API_KEY,
 });
@@ -25,6 +26,7 @@ app.post("/getGTPText", async (req, res) => {
   const msg = req.body.message;
 
   try {
+    //search this code on chatgpt
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       temperature: 0.9,
@@ -34,7 +36,9 @@ app.post("/getGTPText", async (req, res) => {
       presence_penalty: 0.6,
       messages: msg,
     });
-    console.log(response.data, "my data");
+
+    console.log(response.data, "my data"); // in this output of request message
+    
     return res.json({ status: 200, value: response.data });
   } catch (err) {
     console.log(err.response.data);
