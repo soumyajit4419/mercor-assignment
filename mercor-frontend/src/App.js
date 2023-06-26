@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+// used to record the speech
 import { useSpeechRecognition } from "react-speech-kit";
 import axios from "axios";
 import "./App.css";
@@ -123,18 +124,22 @@ function App() {
             marginTop: "20px",
           }}
         >
+         {/* here we will add the text */}
           <textarea
             value={value}
             onChange={(event) => setValue(event.target.value)}
             style={{ width: "70%" }}
           />
+          {/* it will start recording the current voice */}
           <button onClick={listen} style={{ margin: "0 10px" }}>
             🎤 Start Speaking
           </button>
+          {/* if we want to stop recording */}
           <button onClick={stop} style={{ margin: "0 10px" }}>
             🛑 Stop Recording
           </button>
         </div>
+
         {listening && (
           <div style={{ marginTop: "8px" }}>Go ahead I'm listening</div>
         )}
